@@ -1,0 +1,27 @@
+---
+title: "lab3"
+author: "Yilda Macias"
+date: "2024-04-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lab 3
+```{r, libraries}
+library(pacman)
+p_load("tidyverse")
+
+## Set up working directory, EPI 560R folder
+setwd <- "~/Users/yilda/Desktop/EPI_560R"
+
+```
+
+\pagebreak  
+
+## Code Appendix  
+ 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE} 
+```
