@@ -1,0 +1,172 @@
+---
+title: "EPI 560: Lab 4"
+author: "Yilda Macias"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  ioslides_presentation:
+    incremental: TRUE
+    df_print: paged
+    theme: cosmo
+    toc: yes
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "build") })
+---
+
+# EPI 560 Final Project Slides
+
+## Introduction
+### Yilda Macias
+  * 2nd-year Epi PhD student
+  * Dog mom
+  * Avid napper
+  * Goose supporter
+
+```{r imageintro, echo=FALSE, message=FALSE, warning=FALSE}
+library(pacman)
+p_load("png")
+
+file_path <- "/Users/yilda/Desktop/EPI_560R/macias_y_epi560/goose.png"
+# Read the PNG image
+image_data <- readPNG(file_path)
+# Display the image
+plot(1:2, type = 'n', xlab = "", ylab = "", xlim = c(0, 2.4), ylim = c(0, 1), axes=FALSE)
+rasterImage(image_data, 1, 0, 2, 1)
+```
+
+## Cars Dataset
+
+```{r codechunk}
+print(head(cars))
+```
+
+# Markdown Formatting Overview
+
+# Headers
+
+## *You can create different headers by adding a different number of hashtags in the front (#).*
+
+# Header 1
+## Header 2
+### Header 3
+#### Header 4
+##### Header 5
+###### Header 6
+
+## Lists
+
+### Ordered Lists
+  - You can create ordered lists by using either an asterisk or a dash in the beginning. You can create sub-bullets by hitting tab. Here is a to-do list for this weekend with order based on priority level.
+      1. 560 Homework
+      2. 517 Homework
+      3. 516 Mini project
+      
+### Unordered Lists
+  - You can create an unordered list by just including items using bullets. These bullets can be generated using asterisks (*). Here is an example grocery list.
+    * Chives
+    * Tomatillos
+    * Green chile
+    * Chicken breast
+    * Tortillas
+    
+### Task Lists
+  - Here I added double brackets in the beginning to make this a checkable list. If I include an `x` inside one, when the document is knitted, this will be checked off.
+      - [x] **Cry**
+      - [ ] *Nap*
+      - [ ] *Repeat*
+      
+     
+## Text Formats
+  + Get **daisies**
+  + Get *tulips*
+  + Get $\sf{H_{2}O}$
+  + Calculate $\alpha$ and $\gamma$ to complete estimates for `regression equation`: 
+  $$\alpha + \beta_1X_1 + \beta_2X_2 + \gamma_1X_1X_2 $$
+  
+# Embedding images
+
+## **Dexter still smells like beef.**
+```{r image, echo=FALSE, message=FALSE, warning=FALSE}
+library(pacman)
+p_load("png")
+
+file_path1 <- "/Users/yilda/Desktop/EPI_560R/macias_y_epi560/dex.png"
+# Read the PNG image
+image_data1 <- readPNG(file_path1)
+# Display the image
+plot(1:2, type = 'n', xlab = "", ylab = "", xlim = c(0, 2.4), ylim = c(0, 1), axes=FALSE)
+rasterImage(image_data1, 0, 0, 1, 1)
+```
+
+# Code Chunks
+```{r library, echo=FALSE, message=FALSE, warning=FALSE}
+# Setup, load libraries needed
+library(pacman)
+p_load("tidyverse", "knitr", "ggplot2")
+
+
+# Generate variables for dataframe
+## set seed
+set.seed(35)
+
+## generate exposure, outcome, and confounder
+exposure <- sample(c(TRUE, FALSE), size = 20, replace = TRUE, prob = c(0.4, 0.6))
+outcome <- sample(c(TRUE, FALSE), size = 20, replace = TRUE, prob = c(0.7, 0.3))
+confounder <- round(ifelse(exposure, rnorm(sum(exposure), mean = 5, sd = 2), rnorm(20 - sum(exposure), mean = 8, sd = 2)),2)
+
+## create dataframe
+data <- data.frame(
+  exposure = exposure,
+  outcome = outcome,
+  confounder = confounder
+)
+
+# view(data)
+```
+
+## Formatted table of the first 5 rows of your small dataframe using the kable function
+```{r table5, echo=FALSE, message=FALSE, warning=FALSE}
+# Print 5 rows of data
+kable(head(data, 5))
+```
+
+## 2x2 table showing exposure and outcome
+```{r twobtwo, echo=FALSE, message=FALSE, warning=FALSE}
+# Create a 2x2 contingency table
+data2 <- table(data$exposure, data$outcome)
+data2 <- as.data.frame.matrix(data2)
+
+# Add titles to rows and columns
+rownames(data2) <- c("Unexposed", "Exposed")
+colnames(data2) <- c("No Outcome", "Outcome") 
+
+# Display table
+kable(data2, caption = "2 by 2 Table")
+```
+
+## Histogram of confounder
+```{r hist1, echo=FALSE, message=FALSE, warning=FALSE}
+# Print histogram of confounder
+ggplot(data, aes(x = confounder)) +
+  geom_histogram(binwidth = 1, fill = "darkred", color="black") +
+  labs(title = "Histogram of Confounder", x = "Confounder Value", y = "Frequency (counts)")
+```
+
+## Histogram of confounder by exposure
+```{r hist2, echo=FALSE, message=FALSE, warning=FALSE}
+# Stratify by exposure
+ggplot(data, aes(x = confounder)) +
+  geom_histogram(binwidth = 1, fill = "darkred", color="black") +
+  labs(title = "Histogram of Confounder", x = "Confounder Value", y = "Frequency (counts)") +
+  facet_grid(. ~ exposure, labeller = labeller(exposure = c("TRUE" = "Exposed", "FALSE" = "Unexposed")))
+```
+
+## Inline Code 
+In the dataset generated above, the `confounder` has a mean value of `r mean(data$confounder[data$exposure == TRUE])` in the exposed, and a `r mean(data$confounder[data$exposure == FALSE])` in the unexposed. Although the instructions said that the distributions for the confounder in both exposed and unexposed was meant to be normally distributed, I was not able to figure this out.
+
+
+\pagebreak  
+
+## Code Appendix  
+ 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE} 
+```
