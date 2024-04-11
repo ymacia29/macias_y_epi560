@@ -1,0 +1,113 @@
+---
+title: "EPI 560: Lab 5"
+author: "Yilda Macias"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+    html_document:
+        df_print: paged
+        theme: cosmo
+        toc: yes
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "build") })
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Setup
+library(pacman)
+p_load("tidyverse", "knitr", "RSQLite", "DBI", "kableExtra")
+
+```
+
+## Lab 5: Responses  
+
+# Part 1:
+###Here is a picture of Dexter as a peace offering for making you read my trash.
+![mom is sorry.](/Users/yilda/Desktop/EPI_560R/macias_y_epi560/Dex2.png)
+### 2. The names of the three columns are `SEQN`, `LBDHHD`, and `LBDHDDSI`.
+### 3. The highest value in ` LBDHDD` is 72.
+
+```{r part_1, echo=FALSE, message=FALSE, warning=FALSE}
+# code for part 1
+db <- dbConnect(RSQLite::SQLite(), dbname = "epi560.sqlite")
+sleepHead <- dbGetQuery(db, "SELECT * from P_SLQ LIMIT 2")
+
+# Question 2
+P_DBL <- dbGetQuery(db, "SELECT * FROM P_HDL")
+
+# Question 3
+dbGetQuery(db, "SELECT * FROM P_HDL LIMIT 3")
+
+# Disconnect
+dbDisconnect(db)
+```
+
+# Part 2
+
+#### 2/3. Column names and types can be found in the table below.
+#### 4. SEQN serves as both a primary key and foreign key.
+
+```{r part_2, echo=FALSE, message=FALSE, warning=FALSE}
+# code for part 2
+db <- dbConnect(RSQLite::SQLite(), dbname = "epi560.sqlite")
+
+# choose table
+hearhealth <- dbGetQuery(db, "SELECT * FROM P_AUQ")
+
+(col_types <- sapply(hearhealth, class))
+col_info <- sapply(hearhealth, class)
+
+# create a data frame
+col_info_df <- data.frame(Col_Name = names(col_info), Class = col_info)
+
+# display table
+cat("## Column Names and Classes\n\n")
+cat("```{r}\n")
+kable(col_info_df, format = "markdown", col.names = c("Column Name", "Class"), row.names = FALSE)
+cat("```\n")
+
+# print first five lines of table
+kable(hearhealth[1:5, ], "html")
+
+# retrieve two columns from table
+hearhealth2 <- dbGetQuery(db, "SELECT SEQN, AUQ450A FROM P_AUQ")
+
+## print first five lines
+kable(hearhealth2[1:5, ], "html")
+
+# print two columns, subset of rows
+hearhealth7 <- dbGetQuery(db, "SELECT SEQN, AUQ450A FROM P_AUQ WHERE AUQ310 ='5'")
+
+## print first five lines
+kable(hearhealth7[1:5, ], "html")
+
+# retrieve 2 cols with subset of rows by two criteria
+hearhealth8 <- dbGetQuery(db, "SELECT SEQN, AUQ450A FROM P_AUQ WHERE AUQ310 ='5' AND AUQ070 = '2'")
+
+## print first five lines
+kable(hearhealth8[1:5, ], "html")
+
+```
+
+
+# Part 3:
+##### I apologize for the messy tables with the kable function, I am not sure how to edit so that the lines are either present or so that variable names are more spaced out. Too tired to look for more code right now, but I will figure it out in the coming days! 
+
+```{r part_3, echo=FALSE, message=FALSE, warning=FALSE}
+# code for part 3
+# join auditory data and demographic data (tables)
+join_data <- dbGetQuery(db, "SELECT * FROM P_AUQ LEFT JOIN P_DEMO ON P_AUQ.SEQN=p_DEMO.SEQN")
+
+# print first five lines of dataset
+kable(join_data[1:5, ], "html")
+
+# disconnect db
+dbDisconnect(db) # proud that I remembered to do this! Very fancy.
+```
+
+
+\pagebreak  
+
+## Code Appendix  
+ 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE} 
+```
