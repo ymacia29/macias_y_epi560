@@ -1,6 +1,6 @@
 ---
-title: "EPI 560: Lab {X}"
-author: "INSERT YOUR NAME HERE"
+title: "EPI 560: Lab 7"
+author: "Yilda Macias"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
     html_document:
@@ -14,17 +14,123 @@ knit: (function(inputFile, encoding) {
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 # Setup
 library(pacman)
-p_load("tidyverse", "knitr")
+p_load("tidyverse", "knitr", "dplyr", "ggplot2", "haven", "readxl", "rhdf5", "arrow")
+
+# if (!require("BiocManager", quietly = TRUE))
+# install.packages("BiocManager")
+# BiocManager::install("rhdf5")
+
+# install.packages("arrow", repos = c("https://apache.r-universe.dev"))
 ```
 
-## Lab {X}: Responses  
-```{r part_1, echo=FALSE, message=FALSE, warning=FALSE}
+## Lab 7: Responses 
+### Part 1.
+All the data appear to be in each of datasets created from reading in the different formats.
+
+```{r csv, echo=FALSE, message=FALSE, warning=FALSE}
 # code for part 1
+
+# load csv
+before.csv <- Sys.time()
+csv <- read.csv("P_DEMO.csv")
+after.csv <- Sys.time()
+(elapsed.csv <- after.csv - before.csv)
+
+# scatterplot
+csvplot <- ggplot(csv, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (csv)", x = "WTINTPRP", y = "WTMECPRP")
+csvplot
 ```
 
-```{r part_2, echo=FALSE, message=FALSE, warning=FALSE}
-# code for part 2
+
+```{r zip, echo=FALSE, message=FALSE, warning=FALSE}
+# load zip
+before.zip <- Sys.time()
+zipp <- read.csv(unz("/Users/yilda/Desktop/EPI_560R/macias_y_epi560/P_DEMO.csv.zip", "P_DEMO.csv"))
+after.zip <- Sys.time()
+(elapsed.zip <- after.zip - before.zip)
+
+# scatterplot
+zipplot <- ggplot(zipp, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (zip)", x = "WTINTPRP", y = "WTMECPRP")
+zipplot
 ```
+
+```{r dta, echo=FALSE, message=FALSE, warning=FALSE}
+# load dta
+before.dta <- Sys.time()
+dta <- read_dta("P_DEMO.dta")
+after.dta <- Sys.time()
+(elapsed.dta <- after.dta - before.dta)
+
+# scatterplot
+dtaplot <- ggplot(dta, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (dta)", x = "WTINTPRP", y = "WTMECPRP")
+dtaplot
+```
+
+
+```{r feather, echo=FALSE, message=FALSE, warning=FALSE}
+# load feather
+before.feather <- Sys.time()
+feather <- arrow::read_feather("P_DEMO.feather")
+after.feather <- Sys.time()
+(elapsed.feather <- after.feather - before.feather)
+
+# scatterplot
+featherplot <- ggplot(feather, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (feather)", x = "WTINTPRP", y = "WTMECPRP")
+featherplot
+```
+
+```{r hdf5, echo=FALSE, message=FALSE, warning=FALSE}
+# load hdf5
+before.hdf5 <- Sys.time()
+hdf5 <- rhdf5::h5read("P_DEMO.hdf5", name="P_DEMO")
+after.hdf5 <- Sys.time()
+(elapsed.hdf5 <- after.hdf5 - before.hdf5)
+
+# scatterplot
+hdf5plot <- ggplot(hdf5, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (hdf5)", x = "WTINTPRP", y = "WTMECPRP")
+hdf5plot
+```
+
+```{r parquet, echo=FALSE, message=FALSE, warning=FALSE}
+# load parquet
+before.parquet <- Sys.time()
+parquet <- arrow::read_parquet("P_DEMO.parquet", name="P_DEMO")
+after.parquet <- Sys.time()
+(elapsed.parquet <- after.parquet - before.parquet)
+
+# scatterplot
+parquetplot <- ggplot(parquet, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (parquet)", x = "WTINTPRP", y = "WTMECPRP")
+parquetplot
+```
+
+```{r xlsx, echo=FALSE, message=FALSE, warning=FALSE}
+# load xlsx
+before.xlsx <- Sys.time()
+xlsx <- read_xlsx("P_DEMO.xlsx")
+after.xlsx <- Sys.time()
+(elapsed.xlsx <- after.xlsx - before.xlsx)
+
+# scatterplot
+xlsxplot <- ggplot(xlsx, aes(x=WTINTPRP, y=WTMECPRP)) +
+  geom_point() +
+  labs(title = "Sample weights used in NHANES (xslx)", x = "WTINTPRP", y = "WTMECPRP")
+xlsxplot
+```
+
+### Part 2. 
+The file type that read in the fastest was feather, at 0.028 seconds. It was followed by the parquet file, at 0.032 seconds, for a difference of `r round(elapsed.parquet-elapsed.feather,2)`. I tried using inline code for this, but it did not work. I am not sure why. Is it because the ouput is not a simple estimate? The real answer should be 0.004 seconds.
 
 
 \pagebreak  
