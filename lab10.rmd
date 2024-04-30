@@ -1,0 +1,35 @@
+---
+title: "EPI 560: Lab {X}"
+author: "INSERT YOUR NAME HERE"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+    html_document:
+        df_print: paged
+        theme: cosmo
+        toc: yes
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "build") })
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Setup
+library(pacman)
+p_load("tidyverse", "knitr")
+```
+
+## Lab {X}: Responses  
+```{r part_1, echo=FALSE, message=FALSE, warning=FALSE}
+# code for part 1
+```
+
+```{r part_2, echo=FALSE, message=FALSE, warning=FALSE}
+# code for part 2
+```
+
+
+\pagebreak  
+
+## Code Appendix  
+ 
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE} 
+```
